@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Svobodne Szkolenia | Szkolenia AI, Biznes i Dofinansowania</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        // ZAKTUALIZOWANA, JAŚNIEJSZA PALETA KOLORÓW
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5fcf8', 100: '#eaf5f0', 200: '#cae6d8',
+                            400: '#8fc7af', 800: '#2b785a', 900: '#1d5740', 950: '#174231',
+                        },
+                        royal: {
+                            100: '#d1f0e1', 300: '#82d6ac', 400: '#4ebd87',
+                            500: '#299b66', 600: '#218054', 700: '#1b6643',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 8s ease-in-out infinite',
+                        'blob': 'blob 10s infinite',
+                        'marquee': 'marquee 30s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            background-color: #f5fcf8; /* Zaktualizowane tło body */
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.15s; }
+        .reveal-delay-2 { transition-delay: 0.3s; }
+        .reveal-delay-3 { transition-delay: 0.45s; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #174231; }
+        ::-webkit-scrollbar-thumb { background: #2b785a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #299b66; }
+
+        .custom-input {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .custom-input:focus + label,
+        .custom-input:not(:placeholder-shown) + label {
+            transform: translateY(-1.8rem) scale(0.8);
+            color: #4ebd87; /* Zaktualizowany focus labela */
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-gradient-royal {
+            background: linear-gradient(to right, #4ebd87, #299b66, #1d5740);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* FAQ Accordion animacja */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.3s ease-in-out; }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 font-sans selection:bg-royal-500 selection:text-white relative">
+
+    <div class="fixed top-0 left-0 w-full h-1 z-[100] bg-brand-50">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-royal-400 to-royal-600 transition-transform duration-150 ease-out origin-left scale-x-0"></div>
+    </div>
+
+    <a href="#kontakt" class="fixed bottom-8 right-8 z-[90] bg-royal-500 text-white p-4 rounded-full shadow-[0_10px_25px_rgba(41,155,102,0.4)] hover:bg-royal-600 hover:scale-110 transition-all duration-300 group" aria-label="Szybki kontakt">
+        <div class="absolute inset-0 rounded-full border-2 border-royal-400 animate-pulse-slow"></div>
+        <i data-lucide="message-circle" class="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform"></i>
+    </a>
+
+    <nav class="fixed w-full z-50 transition-all duration-500 top-6" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20 rounded-[2rem] px-8 bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500" id="nav-container">
+                
+                <div class="flex-shrink-0 flex items-center cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <div class="w-12 h-12 bg-gradient-to-br from-brand-900 to-brand-950 flex items-center justify-center mr-4 rounded-[1.25rem] group-hover:from-royal-500 group-hover:to-royal-600 transition-all duration-500 shadow-lg group-hover:shadow-royal-500/30 transform group-hover:-rotate-3">
+                        <i data-lucide="graduation-cap" class="text-white w-6 h-6"></i>
+                    </div>
+                    <span class="font-heading font-black text-2xl tracking-tight text-brand-950 flex flex-col justify-center leading-none">
+                        SVOBODNE<span class="text-royal-600 font-bold text-[0.65rem] tracking-[0.4em] mt-1.5 uppercase">Szkolenia</span>
+                    </span>
+                </div>
+
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#o-nas" class="text-xs font-bold tracking-widest text-brand-800 hover:text-royal-600 transition-colors uppercase relative group py-2">Dlaczego my<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-royal-500 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100"></span></a>
+                    <a href="#proces" class="text-xs font-bold tracking-widest text-brand-800 hover:text-royal-600 transition-colors uppercase relative group py-2">Proces<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-royal-500 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100"></span></a>
+                    <a href="#oferta" class="text-xs font-bold tracking-widest text-brand-800 hover:text-royal-600 transition-colors uppercase relative group py-2">Szkolenia<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-royal-500 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100"></span></a>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <div class="hidden md:block">
+                        <a href="#kontakt" class="relative overflow-hidden bg-brand-950 text-white px-8 py-3.5 text-xs font-bold tracking-widest uppercase rounded-2xl transition-all duration-500 shadow-xl hover:shadow-royal-500/20 group flex items-center justify-center border border-transparent hover:border-royal-400/30">
+                            <span class="relative z-10 group-hover:text-white transition-colors duration-300">Dofinansowanie</span>
+                            <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-royal-600 to-royal-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-0"></div>
+                        </a>
+                    </div>
+                    <button id="mobile-menu-btn" aria-label="Menu" class="lg:hidden text-brand-950 focus:outline-none hover:text-royal-600 transition-colors">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden fixed inset-0 z-[-1] bg-brand-950/95 backdrop-blur-xl flex-col justify-center items-center h-screen w-screen transition-opacity duration-300">
+            <button id="close-menu-btn" aria-label="Zamknij" class="absolute top-10 right-8 text-white hover:text-royal-400 transition-colors"><i data-lucide="x" class="w-10 h-10"></i></button>
+            <div class="space-y-8 text-center flex flex-col items-center">
+                <a href="#o-nas" class="text-3xl font-serif italic text-white hover:text-royal-300 transition-colors mobile-link">Dlaczego my</a>
+                <a href="#proces" class="text-3xl font-serif italic text-white hover:text-royal-300 transition-colors mobile-link">Proces</a>
+                <a href="#oferta" class="text-3xl font-serif italic text-white hover:text-royal-300 transition-colors mobile-link">Oferta</a>
+                <a href="#faq" class="text-3xl font-serif italic text-white hover:text-royal-300 transition-colors mobile-link">FAQ</a>
+                <a href="#kontakt" class="mt-8 text-sm font-bold tracking-widest uppercase text-white bg-royal-500 px-12 py-5 rounded-2xl mobile-link shadow-lg hover:bg-royal-600 transition-colors">Skontaktuj się</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative min-h-screen flex flex-col justify-center pt-32 pb-10 overflow-hidden bg-white">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-royal-200/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
+            <div class="absolute top-[20%] right-[-10%] w-[40rem] h-[40rem] bg-brand-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full mb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <div class="lg:col-span-6 text-left reveal">
+                    <div class="inline-flex items-center bg-brand-50 border border-brand-200 rounded-full px-4 py-2 mb-6">
+                        <span class="flex w-2 h-2 bg-royal-500 rounded-full mr-2 animate-pulse"></span>
+                        <span class="text-[0.65rem] font-bold uppercase tracking-widest text-brand-900">Rekrutacja do BUR otwarta</span>
+                    </div>
+                    <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-brand-950 leading-[1.1] mb-6 tracking-tighter">
+                        Profesjonalne szkolenia i <span class="font-serif italic font-normal text-gradient-royal pr-4">skuteczne wsparcie</span> w dotacjach
+                    </h1>
+                    <p class="text-lg sm:text-xl text-brand-800/80 mb-10 max-w-lg leading-relaxed font-light">
+                        Pomagamy firmom i osobom indywidualnym zdobyć dofinansowanie na szkolenia oraz realizujemy nowoczesne kursy z zakresu AI i zarządzania.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-start sm:items-center">
+                        <a href="#oferta" class="w-full sm:w-auto text-center inline-flex justify-center items-center bg-brand-950 text-white px-10 py-4 text-xs font-bold uppercase tracking-[0.15em] rounded-xl hover:bg-royal-600 transition-all duration-500 shadow-2xl hover:shadow-royal-500/30 transform hover:-translate-y-1">
+                            Sprawdź ofertę
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 relative mt-10 lg:mt-0 reveal reveal-delay-1 h-[500px] md:h-[600px]">
+                    <div class="absolute inset-0 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 border border-white/40 transform -rotate-2 hover:rotate-0 transition-transform duration-700 ease-out">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Szkolenia biznesowe" class="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-brand-950/20 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-10 -left-6 md:-left-10 z-20 glass p-6 rounded-2xl shadow-2xl flex items-center space-x-5 animate-float backdrop-blur-xl bg-white/20 border border-white/40">
+                        <div class="bg-gradient-to-br from-royal-500 to-royal-600 p-4 rounded-xl text-white shadow-lg">
+                            <i data-lucide="percent" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <p class="font-heading font-black text-3xl text-brand-950 leading-none drop-shadow-sm">Do 80%</p>
+                            <p class="text-[0.65rem] font-bold text-brand-900 uppercase tracking-[0.2em] mt-1">Średniego Dofinansowania</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full border-t border-brand-100 bg-white/50 py-8 relative z-10 overflow-hidden">
+            <p class="text-center text-[0.6rem] font-bold text-brand-400 uppercase tracking-[0.3em] mb-6">Zaufali nam liderzy</p>
+            <div class="flex whitespace-nowrap overflow-hidden relative">
+                <div class="absolute left-0 top-0 w-24 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
+                <div class="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+                <div class="flex animate-marquee space-x-16 items-center px-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                    <span class="text-2xl font-heading font-black text-brand-900">ACME Corp</span>
+                    <span class="text-2xl font-serif italic font-bold text-brand-900">GlobalTech</span>
+                    <span class="text-2xl font-heading font-black text-brand-900">Innovate.AI</span>
+                    <span class="text-2xl font-serif italic font-bold text-brand-900">NextGen</span>
+                    <span class="text-2xl font-heading font-black text-brand-900">FutureSoft</span>
+                    <span class="text-2xl font-serif italic font-bold text-brand-900">DataFlow</span>
+                    <span class="text-2xl font-heading font-black text-brand-900">ACME Corp</span>
+                    <span class="text-2xl font-serif italic font-bold text-brand-900">GlobalTech</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-white border-y border-brand-50 relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center reveal">
+                <div class="p-6 group">
+                    <p class="font-heading text-4xl md:text-5xl font-black text-brand-950 mb-2 group-hover:scale-110 transition-transform">500<span class="text-royal-500">+</span></p>
+                    <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-400">Przeszkolonych osób</p>
+                </div>
+                <div class="p-6 group">
+                    <p class="font-heading text-4xl md:text-5xl font-black text-brand-950 mb-2 group-hover:scale-110 transition-transform">10<span class="text-royal-500">M+</span></p>
+                    <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-400">Pozyskanych dotacji</p>
+                </div>
+                <div class="p-6 group">
+                    <p class="font-heading text-4xl md:text-5xl font-black text-brand-950 mb-2 group-hover:scale-110 transition-transform">95<span class="text-royal-500">%</span></p>
+                    <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-400">Sukcesów we wnioskach</p>
+                </div>
+                <div class="p-6 group">
+                    <p class="font-heading text-4xl md:text-5xl font-black text-brand-950 mb-2 group-hover:scale-110 transition-transform flex justify-center items-center"><i data-lucide="award" class="w-10 h-10 text-royal-500 mr-2"></i>ISO</p>
+                    <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-400">Certyfikowana jakość</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="o-nas" class="py-32 bg-brand-950 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-overlay"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-royal-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="mb-16 text-center reveal">
+                <p class="text-[0.65rem] font-bold text-royal-400 uppercase tracking-[0.3em] mb-4">Gwarancja jakości</p>
+                <h2 class="font-heading text-4xl md:text-5xl font-black text-white mb-6 leading-[1.1] tracking-tight">
+                    Dlaczego warto nam <span class="font-serif italic font-normal text-gradient-royal">zaufać?</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass p-10 rounded-3xl flex flex-col group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 reveal shadow-lg">
+                    <div class="w-16 h-16 rounded-2xl bg-royal-500/20 flex items-center justify-center text-royal-400 mb-8 group-hover:bg-royal-500 group-hover:text-white transition-all border border-royal-500/30">
+                        <i data-lucide="shield-check" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-black text-white mb-4">Certyfikat ISO 9001:2015</h3>
+                    <p class="text-brand-100/70 text-sm leading-relaxed font-light">Pracujemy w oparciu o sprawdzone procesy, gwarantujące najwyższą jakość usług szkoleniowych i pełen profesjonalizm.</p>
+                </div>
+                <div class="glass p-10 rounded-3xl flex flex-col group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 reveal reveal-delay-1 shadow-lg">
+                    <div class="w-16 h-16 rounded-2xl bg-royal-500/20 flex items-center justify-center text-royal-400 mb-8 group-hover:bg-royal-500 group-hover:text-white transition-all border border-royal-500/30">
+                        <i data-lucide="piggy-bank" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-black text-white mb-4">Eksperci od BUR</h3>
+                    <p class="text-brand-100/70 text-sm leading-relaxed font-light">Znajdujemy się w Bazie Usług Rozwojowych, co otwiera Ci drzwi do pozyskania od 50% do nawet 80% dofinansowania.</p>
+                </div>
+                <div class="glass p-10 rounded-3xl flex flex-col group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 reveal reveal-delay-2 shadow-lg">
+                    <div class="w-16 h-16 rounded-2xl bg-royal-500/20 flex items-center justify-center text-royal-400 mb-8 group-hover:bg-royal-500 group-hover:text-white transition-all border border-royal-500/30">
+                        <i data-lucide="users" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-black text-white mb-4">Praktycy, nie teoretycy</h3>
+                    <p class="text-brand-100/70 text-sm leading-relaxed font-light">Nasi trenerzy to ludzie z wieloletnim doświadczeniem w korporacjach i startupach. Dostajesz gotowe rozwiązania.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proces" class="py-32 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-20 reveal">
+                <p class="text-[0.65rem] font-bold text-royal-500 uppercase tracking-[0.3em] mb-4">Proces współpracy</p>
+                <h2 class="font-heading text-4xl md:text-5xl font-black text-brand-950 mb-6 tracking-tight">Dotacje bez <span class="font-serif italic font-normal text-gradient-royal">stresu.</span></h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="relative group reveal"><div class="text-royal-100 font-heading text-6xl font-black absolute -top-8 -left-4 opacity-50 group-hover:-translate-y-2 transition-transform duration-500">01</div><div class="bg-brand-50 p-8 rounded-[2rem] shadow-sm border border-brand-100 relative z-10 h-full group-hover:bg-white group-hover:shadow-[0_20px_50px_rgba(41,155,102,0.1)] transition-all duration-300"><i data-lucide="search" class="w-8 h-8 text-royal-500 mb-6 group-hover:scale-110 transition-transform"></i><h3 class="font-bold text-brand-950 text-xl mb-3">Audyt potrzeb</h3><p class="text-sm text-brand-800/70 font-light leading-relaxed">Bezpłatnie analizujemy potrzeby i sprawdzamy możliwości finansowania.</p></div></div>
+                <div class="relative group reveal reveal-delay-1"><div class="text-royal-100 font-heading text-6xl font-black absolute -top-8 -left-4 opacity-50 group-hover:-translate-y-2 transition-transform duration-500">02</div><div class="bg-brand-50 p-8 rounded-[2rem] shadow-sm border border-brand-100 relative z-10 h-full group-hover:bg-white group-hover:shadow-[0_20px_50px_rgba(41,155,102,0.1)] transition-all duration-300"><i data-lucide="file-signature" class="w-8 h-8 text-royal-500 mb-6 group-hover:scale-110 transition-transform"></i><h3 class="font-bold text-brand-950 text-xl mb-3">Wniosek do BUR</h3><p class="text-sm text-brand-800/70 font-light leading-relaxed">Przygotowujemy i składamy pełną dokumentację do systemu BUR.</p></div></div>
+                <div class="relative group reveal reveal-delay-2"><div class="text-royal-100 font-heading text-6xl font-black absolute -top-8 -left-4 opacity-50 group-hover:-translate-y-2 transition-transform duration-500">03</div><div class="bg-brand-50 p-8 rounded-[2rem] shadow-sm border border-brand-100 relative z-10 h-full group-hover:bg-white group-hover:shadow-[0_20px_50px_rgba(41,155,102,0.1)] transition-all duration-300"><i data-lucide="presentation" class="w-8 h-8 text-royal-500 mb-6 group-hover:scale-110 transition-transform"></i><h3 class="font-bold text-brand-950 text-xl mb-3">Szkolenie</h3><p class="text-sm text-brand-800/70 font-light leading-relaxed">Realizujemy warsztaty stacjonarne lub online z ekspertami.</p></div></div>
+                <div class="relative group reveal reveal-delay-3"><div class="text-royal-100 font-heading text-6xl font-black absolute -top-8 -left-4 opacity-50 group-hover:-translate-y-2 transition-transform duration-500">04</div><div class="bg-brand-50 p-8 rounded-[2rem] shadow-sm border border-brand-100 relative z-10 h-full group-hover:bg-white group-hover:shadow-[0_20px_50px_rgba(41,155,102,0.1)] transition-all duration-300"><i data-lucide="check-circle" class="w-8 h-8 text-royal-500 mb-6 group-hover:scale-110 transition-transform"></i><h3 class="font-bold text-brand-950 text-xl mb-3">Rozliczenie</h3><p class="text-sm text-brand-800/70 font-light leading-relaxed">Pomagamy w poprawnym rozliczeniu dotacji i certyfikacji.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="oferta" class="py-32 bg-brand-50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+                <div>
+                    <p class="text-[0.65rem] font-bold text-royal-600 uppercase tracking-[0.3em] mb-4">Programy autorskie</p>
+                    <h2 class="font-heading text-5xl font-black text-brand-950 mb-4 tracking-tighter">Kompetencje przyszłości</h2>
+                </div>
+                <div class="mt-6 md:mt-0">
+                    <a href="#kontakt" class="text-xs font-bold uppercase tracking-[0.2em] text-brand-950 hover:text-royal-600 transition-colors border-b-2 border-brand-950 pb-1 hover:border-royal-600">Pobierz pełny katalog</a>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="group relative rounded-[2rem] overflow-hidden bg-white shadow-md hover:shadow-[0_20px_50px_rgba(41,155,102,0.15)] transition-all duration-700 reveal h-[500px] flex flex-col border border-brand-100">
+                    <div class="absolute top-6 right-6 bg-royal-600 text-white font-bold text-[0.6rem] uppercase tracking-[0.2em] px-4 py-2 rounded-full z-20 shadow-lg">Bestseller</div>
+                    <div class="h-1/2 w-full overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80" alt="Szkolenia AI" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out">
+                        <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col justify-end bg-white relative z-10 -mt-10">
+                        <div class="flex items-center mb-4 space-x-3 bg-white p-2 inline-block rounded-lg shadow-sm w-max border border-brand-50">
+                            <span class="text-royal-600 text-[0.6rem] font-bold uppercase tracking-[0.2em]">Technologia</span>
+                        </div>
+                        <h3 class="font-heading text-2xl font-black text-brand-950 mb-2">AI w Biznesie</h3>
+                        <p class="text-brand-800/70 mb-6 text-sm font-light leading-relaxed">Praktyczne wdrażanie narzędzi takich jak ChatGPT, Midjourney, automatyzacja procesów.</p>
+                        <a href="#kontakt" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-royal-600 group-hover:text-royal-500">
+                            Zapytaj o program <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="group relative rounded-[2rem] overflow-hidden bg-white shadow-md hover:shadow-[0_20px_50px_rgba(41,155,102,0.15)] transition-all duration-700 reveal reveal-delay-1 h-[500px] flex flex-col border border-brand-100">
+                    <div class="h-1/2 w-full overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80" alt="Zarządzanie zespołem" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out">
+                        <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col justify-end bg-white relative z-10 -mt-10">
+                        <div class="flex items-center mb-4 space-x-3 bg-white p-2 inline-block rounded-lg shadow-sm w-max border border-brand-50">
+                            <span class="text-royal-600 text-[0.6rem] font-bold uppercase tracking-[0.2em]">Zarządzanie</span>
+                        </div>
+                        <h3 class="font-heading text-2xl font-black text-brand-950 mb-2">Modern Leadership</h3>
+                        <p class="text-brand-800/70 mb-6 text-sm font-light leading-relaxed">Budowanie silnych zespołów, komunikacja NVC i zarządzanie w czasach zmiany.</p>
+                        <a href="#kontakt" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-royal-600 group-hover:text-royal-500">
+                            Zapytaj o program <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="group relative rounded-[2rem] overflow-hidden bg-white shadow-md hover:shadow-[0_20px_50px_rgba(41,155,102,0.15)] transition-all duration-700 reveal reveal-delay-2 h-[500px] flex flex-col border border-brand-100">
+                    <div class="h-1/2 w-full overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Soft skills" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out">
+                        <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col justify-end bg-white relative z-10 -mt-10">
+                        <div class="flex items-center mb-4 space-x-3 bg-white p-2 inline-block rounded-lg shadow-sm w-max border border-brand-50">
+                            <span class="text-royal-600 text-[0.6rem] font-bold uppercase tracking-[0.2em]">Rozwój</span>
+                        </div>
+                        <h3 class="font-heading text-2xl font-black text-brand-950 mb-2">Soft Skills 360°</h3>
+                        <p class="text-brand-800/70 mb-6 text-sm font-light leading-relaxed">Asertywność, radzenie sobie ze stresem, negocjacje i efektywność osobista.</p>
+                        <a href="#kontakt" class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-royal-600 group-hover:text-royal-500">
+                            Zapytaj o program <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-white relative z-20 border-t border-brand-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+            <h2 class="font-heading text-4xl font-black text-brand-950 mb-16">Ucz się od <span class="text-royal-500">praktyków</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="group">
+                    <div class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl border-4 border-brand-50 group-hover:border-royal-400 transition-colors duration-300">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Jan Kowalski" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <h3 class="font-bold text-brand-950 text-xl">Michał Nowak</h3>
+                    <p class="text-sm text-royal-600 font-bold tracking-wider uppercase mb-3">Ekspert AI & Automatyzacji</p>
+                    <p class="text-brand-800/60 font-light text-sm">Wdrożył AI w ponad 50 firmach. Były szef innowacji w sektorze FinTech.</p>
+                </div>
+                <div class="group">
+                    <div class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl border-4 border-brand-50 group-hover:border-royal-400 transition-colors duration-300">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Anna Wisniewska" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <h3 class="font-bold text-brand-950 text-xl">Anna Wiśniewska</h3>
+                    <p class="text-sm text-royal-600 font-bold tracking-wider uppercase mb-3">Trenerka Biznesu</p>
+                    <p class="text-brand-800/60 font-light text-sm">Certyfikowany coach ICF. Szkoliła zarządy czołowych polskich spółek.</p>
+                </div>
+                <div class="group">
+                    <div class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl border-4 border-brand-50 group-hover:border-royal-400 transition-colors duration-300">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80" alt="Piotr Zieliński" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <h3 class="font-bold text-brand-950 text-xl">Piotr Zieliński</h3>
+                    <p class="text-sm text-royal-600 font-bold tracking-wider uppercase mb-3">Specjalista ds. Dofinansowań</p>
+                    <p class="text-brand-800/60 font-light text-sm">Zna system BUR od podszewki. Skuteczność jego wniosków wynosi 98%.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-brand-950 text-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <h2 class="font-heading text-4xl text-center font-black mb-16">Co mówią nasi <span class="font-serif italic font-normal text-royal-400">klienci?</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-3xl relative reveal">
+                    <div class="flex text-royal-400 mb-4 space-x-1">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-brand-100/80 font-light text-sm leading-relaxed mb-6">"Szkolenie z AI otworzyło nam oczy. Automatyzacja skróciła czas obsługi klienta o 30%. A co najważniejsze - formalności z BUR załatwili za nas!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-royal-600 rounded-full flex items-center justify-center font-bold mr-4">MK</div>
+                        <div>
+                            <p class="font-bold text-sm">Marek Kowalski</p>
+                            <p class="text-xs text-brand-400">CEO, TechStore</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-3xl relative reveal reveal-delay-1">
+                    <div class="flex text-royal-400 mb-4 space-x-1">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-brand-100/80 font-light text-sm leading-relaxed mb-6">"Dzięki dofinansowaniu przeszkoliliśmy cały dział sprzedaży z technik negocjacji. Rewelacyjni trenerzy, pełen profesjonalizm."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-royal-600 rounded-full flex items-center justify-center font-bold mr-4">JL</div>
+                        <div>
+                            <p class="font-bold text-sm">Joanna Lewandowska</p>
+                            <p class="text-xs text-brand-400">Dyrektor HR</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-3xl relative reveal reveal-delay-2 hidden md:block">
+                    <div class="flex text-royal-400 mb-4 space-x-1">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i><i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-brand-100/80 font-light text-sm leading-relaxed mb-6">"Nie wierzyłem, że proces pozyskania dotacji może być tak prosty. Zespół Svobodne Szkolenia zajął się wszystkim, my tylko przyszliśmy na salę."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-royal-600 rounded-full flex items-center justify-center font-bold mr-4">TW</div>
+                        <div>
+                            <p class="font-bold text-sm">Tomasz Wójcik</p>
+                            <p class="text-xs text-brand-400">Właściciel Agencji</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24 bg-brand-50 relative border-b border-brand-100">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+            <h2 class="font-heading text-4xl text-center font-black text-brand-950 mb-12">Często zadawane pytania</h2>
+            <div class="space-y-4">
+                <details class="group bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+                    <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-6 text-brand-900 hover:text-royal-600 transition-colors">
+                        Kto może skorzystać z dofinansowania BUR?
+                        <span class="transition group-open:rotate-180"><i data-lucide="chevron-down" class="w-5 h-5"></i></span>
+                    </summary>
+                    <div class="p-6 pt-0 text-brand-800/70 font-light text-sm">
+                        Z dofinansowania mogą skorzystać mikro, małe i średnie przedsiębiorstwa (MŚP) oraz ich pracownicy, a w niektórych województwach także duże firmy oraz osoby fizyczne. Skontaktuj się z nami, a sprawdzimy, czy się kwalifikujesz.
+                    </div>
+                </details>
+                <details class="group bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+                    <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-6 text-brand-900 hover:text-royal-600 transition-colors">
+                        Ile wynosi wkład własny?
+                        <span class="transition group-open:rotate-180"><i data-lucide="chevron-down" class="w-5 h-5"></i></span>
+                    </summary>
+                    <div class="p-6 pt-0 text-brand-800/70 font-light text-sm">
+                        W zależności od programu, wieku pracowników, ich wykształcenia oraz statusu firmy, dofinansowanie wynosi od 50% do nawet 100%. Oznacza to, że Twój wkład własny może wynieść od 0% do 50% wartości szkolenia.
+                    </div>
+                </details>
+                <details class="group bg-white rounded-2xl shadow-sm border border-brand-100 overflow-hidden">
+                    <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-6 text-brand-900 hover:text-royal-600 transition-colors">
+                        Czy pomagacie w formalnościach?
+                        <span class="transition group-open:rotate-180"><i data-lucide="chevron-down" class="w-5 h-5"></i></span>
+                    </summary>
+                    <div class="p-6 pt-0 text-brand-800/70 font-light text-sm">
+                        Tak! Odciążamy naszych klientów z dokumentacji w 90%. Zapewniamy wsparcie doradcy, który przygotuje wnioski, pomoże zarejestrować się w Bazie Usług Rozwojowych i poprowadzi Cię krok po kroku aż do rozliczenia dotacji.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontakt" class="py-32 bg-brand-950 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-900 rounded-full blur-[100px] opacity-40"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+                <div class="reveal">
+                    <p class="text-[0.65rem] font-bold text-royal-400 uppercase tracking-[0.3em] mb-4">Kontakt</p>
+                    <h2 class="font-heading text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">
+                        Zrób pierwszy krok do <span class="font-serif italic font-normal text-royal-400">rozwoju.</span>
+                    </h2>
+                    <p class="text-brand-100/60 mb-12 font-light text-lg leading-relaxed">
+                        Zostaw swoje dane, a nasz doradca oddzwoni z gotowymi rozwiązaniami. Pomożemy dobrać program i zająć się wnioskiem o dotację.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="flex items-center text-white group">
+                            <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-royal-500 group-hover:bg-royal-500 transition-all bg-white/5">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </div>
+                            <div class="ml-6">
+                                <p class="text-[0.65rem] text-brand-400 uppercase tracking-[0.2em] mb-1">E-mail</p>
+                                <a href="mailto:biuro@svobodapark.pl" class="text-lg font-light tracking-wide hover:text-royal-400 transition-colors">biuro@svobodapark.pl</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-white group">
+                            <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-royal-500 group-hover:bg-royal-500 transition-all bg-white/5">
+                                <i data-lucide="phone" class="w-5 h-5"></i>
+                            </div>
+                            <div class="ml-6">
+                                <p class="text-[0.65rem] text-brand-400 uppercase tracking-[0.2em] mb-1">Telefon</p>
+                                <a href="tel:+48000000000" class="text-lg font-light tracking-wide hover:text-royal-400 transition-colors">+48 000 000 000</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-10 md:p-14 rounded-[2rem] reveal reveal-delay-1 border border-white/10 shadow-2xl relative">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-royal-500 rounded-full blur-[40px] opacity-30"></div>
+                    <form onsubmit="event.preventDefault(); alert('Wiadomość wysłana! Skontaktujemy się z Tobą wkrótce.');" class="space-y-8 relative z-10">
+                        <div class="relative group">
+                            <input type="text" id="name" required class="custom-input block w-full px-0 py-3 bg-transparent text-white text-lg focus:ring-0 focus:outline-none transition-colors peer border-white/20 focus:border-royal-400" placeholder=" ">
+                            <label for="name" class="absolute top-3 left-0 text-brand-100/50 text-sm font-light tracking-wide transition-all duration-300 pointer-events-none group-focus-within:text-royal-400">Imię i nazwisko / Firma</label>
+                        </div>
+                        <div class="relative group">
+                            <input type="email" id="email" required class="custom-input block w-full px-0 py-3 bg-transparent text-white text-lg focus:ring-0 focus:outline-none transition-colors peer border-white/20 focus:border-royal-400" placeholder=" ">
+                            <label for="email" class="absolute top-3 left-0 text-brand-100/50 text-sm font-light tracking-wide transition-all duration-300 pointer-events-none group-focus-within:text-royal-400">Twój adres e-mail</label>
+                        </div>
+                        <div class="relative group">
+                            <input type="tel" id="phone" class="custom-input block w-full px-0 py-3 bg-transparent text-white text-lg focus:ring-0 focus:outline-none transition-colors peer border-white/20 focus:border-royal-400" placeholder=" ">
+                            <label for="phone" class="absolute top-3 left-0 text-brand-100/50 text-sm font-light tracking-wide transition-all duration-300 pointer-events-none group-focus-within:text-royal-400">Numer telefonu (opcjonalnie)</label>
+                        </div>
+                        <div class="relative border-b border-white/20 focus-within:border-royal-400 pb-2">
+                            <label for="course" class="block text-brand-100/50 text-xs font-light mb-2">Jakiego wsparcia potrzebujesz?</label>
+                            <select id="course" required class="block w-full bg-transparent text-white text-lg focus:ring-0 focus:outline-none appearance-none cursor-pointer">
+                                <option value="" disabled selected class="text-brand-900">Wybierz z listy...</option>
+                                <option value="dofinansowania" class="text-brand-900">Dofinansowanie z BUR</option>
+                                <option value="ai" class="text-brand-900">Szkolenia AI</option>
+                                <option value="zarzadzanie" class="text-brand-900">Kompetencje menadżerskie</option>
+                                <option value="inne" class="text-brand-900">Inny temat</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="absolute right-0 bottom-4 w-5 h-5 text-brand-100/50 pointer-events-none"></i>
+                        </div>
+                        <button type="submit" class="w-full bg-white text-brand-950 font-bold uppercase tracking-[0.2em] text-xs px-10 py-5 rounded-xl hover:bg-royal-500 hover:text-white transition-all shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_15px_30px_rgba(41,155,102,0.4)] flex items-center justify-center group mt-4">
+                            Wyślij zapytanie <i data-lucide="arrow-right" class="w-4 h-4 ml-4 transform group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#0e251b] border-t border-white/5 text-brand-100/50 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
+                <div class="lg:col-span-4">
+                    <span class="font-heading font-black text-2xl tracking-tighter text-white uppercase flex flex-col mb-6 leading-none cursor-pointer" onclick="window.scrollTo(0,0)">
+                        Svobodne<span class="text-royal-500 font-bold text-[0.65rem] tracking-[0.3em] mt-1">Szkolenia</span>
+                    </span>
+                    <p class="mb-8 text-sm font-light leading-relaxed max-w-sm">
+                        Budujemy kompetencje przyszłości. Szkolimy menadżerów, wdrażamy AI i pozyskujemy miliony z dotacji na rozwój Twojego biznesu.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-royal-500 hover:text-white transition-all"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-royal-500 hover:text-white transition-all"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-royal-500 hover:text-white transition-all"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-[0.2em] text-[0.65rem]">Na skróty</h4>
+                    <ul class="space-y-4 text-sm font-light">
+                        <li><a href="#o-nas" class="hover:text-royal-400 transition-colors">O firmie</a></li>
+                        <li><a href="#proces" class="hover:text-royal-400 transition-colors">Jak działa BUR?</a></li>
+                        <li><a href="#oferta" class="hover:text-royal-400 transition-colors">Baza szkoleń</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-[0.2em] text-[0.65rem]">Pomoc</h4>
+                    <ul class="space-y-4 text-sm font-light">
+                        <li><a href="#faq" class="hover:text-royal-400 transition-colors">FAQ</a></li>
+                        <li><a href="#" class="hover:text-royal-400 transition-colors">Regulamin</a></li>
+                        <li><a href="#" class="hover:text-royal-400 transition-colors">Polityka Prywatności</a></li>
+                        <li><a href="#kontakt" class="hover:text-royal-400 transition-colors">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-4">
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-[0.2em] text-[0.65rem]">Bądź na bieżąco</h4>
+                    <p class="text-sm font-light mb-4">Zapisz się do newslettera, aby otrzymywać informacje o nowych naborach na dotacje i trendach w AI.</p>
+                    <form class="flex" onsubmit="event.preventDefault(); alert('Dziękujemy za zapis!');">
+                        <input type="email" placeholder="Twój e-mail" required class="bg-white/5 border border-white/10 rounded-l-xl px-4 py-3 w-full text-white text-sm focus:outline-none focus:border-royal-500 transition-colors">
+                        <button type="submit" aria-label="Zapisz" class="bg-royal-500 text-white px-6 py-3 rounded-r-xl hover:bg-royal-600 transition-colors"><i data-lucide="send" class="w-4 h-4"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex justify-between items-center text-[0.65rem] uppercase tracking-widest font-bold">
+                <p>&copy; 2026 Svobodne. Wszelkie prawa zastrzeżone.</p>
+                <p class="text-brand-400">Projektowana z ♥ do jakości</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Inicjalizacja Ikon Lucide
+        lucide.createIcons();
+
+        // Obsługa menu mobilnego
+        const btn = document.getElementById('mobile-menu-btn');
+        const closeBtn = document.getElementById('close-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        btn.addEventListener('click', () => {
+            menu.classList.remove('hidden');
+            menu.classList.add('flex');
+            document.body.style.overflow = 'hidden'; 
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        });
+        
+        mobileLinks.forEach(link => link.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }));
+
+        // Zmiana stylów nawigacji i pasek postępu przy przewijaniu
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            const navContainer = document.getElementById('nav-container');
+            
+            if (window.scrollY > 50) {
+                nav.classList.replace('top-6', 'top-4');
+                navContainer.classList.add('bg-white/95', 'shadow-[0_10px_40px_rgba(23,66,49,0.08)]');
+                navContainer.classList.remove('bg-white/70', 'shadow-[0_8px_30px_rgb(0,0,0,0.04)]');
+            } else {
+                nav.classList.replace('top-4', 'top-6');
+                navContainer.classList.add('bg-white/70', 'shadow-[0_8px_30px_rgb(0,0,0,0.04)]');
+                navContainer.classList.remove('bg-white/95', 'shadow-[0_10px_40px_rgba(23,66,49,0.08)]');
+            }
+
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height);
+            document.getElementById("progress-bar").style.transform = `scaleX(${scrolled})`;
+        });
+
+        // Intersection Observer do płynnego pojawiania się elementów
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => revealOnScroll.observe(el));
+    </script>
+</body>
+</html>
